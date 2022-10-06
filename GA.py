@@ -2,7 +2,7 @@ import random
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-
+plt.rcParams['font.sans-serif']='SimHei'
 
 class GA(object):
     def __init__(self, num_city, num_total, iteration, data):
@@ -112,9 +112,9 @@ class GA(object):
         len_ = len(x)
         assert len(x) == len(y)
         path_list = [t for t in range(len_)]
-        order = list(random.sample(path_list, 2))
+        order = list(random.sample(path_list, 1))
         order.sort()
-        start, end = order
+        start, end = 0,order[0]
 
         # 找到冲突点并存下他们的下标,x中存储的是y中的下标,y中存储x与它冲突的下标
         tmp = x[start:end]
