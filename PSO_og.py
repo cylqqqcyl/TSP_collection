@@ -5,6 +5,12 @@ import bench_functions as bf
 import math
 from mpl_toolkits.mplot3d import Axes3D
 
+
+plt.rcParams['font.family'] = 'JBHGSS2'
+
+plt.rcParams['savefig.dpi'] = 300  # 图片像素
+plt.rcParams['figure.dpi'] = 300  # 分辨率
+# plt.rcParams['figure.figsize'] = (6.0, 6.0)
 class PSO():
     def __init__(self, sizepop=50, rangepop=(-100,100), rangespeed=(-0.5,0.5), maxgen=300, weight=1, lr=(0.49445, 1.49445), cycle_gen=10):
         self.sizepop = sizepop
@@ -73,9 +79,10 @@ class PSO():
 
     def plot(self):
         plt.plot(self.result)
-        plt.xlabel('generation')
-        plt.ylabel('fitness')
+        plt.xlabel('代数')
+        plt.ylabel('适应度')
         plt.show()
+
 
 
 

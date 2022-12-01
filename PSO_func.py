@@ -5,8 +5,13 @@ import bench_functions as bf
 import math
 from mpl_toolkits.mplot3d import Axes3D
 
+plt.rcParams['font.family'] = 'JBHGSS2'
+plt.rcParams['savefig.dpi'] = 300  # 图片像素
+plt.rcParams['figure.dpi'] = 300  # 分辨率
+plt.rcParams['figure.figsize'] = (10.0, 6.0)
+
 class PSO():
-    def __init__(self, sizepop=50, rangepop=(-100,100), rangespeed=(-0.5,0.5), maxgen=300, weight=1, lr=(0.49445, 1.49445), cycle_gen=10, func=bf.func1):
+    def __init__(self, sizepop=50, rangepop=(-100,100), rangespeed=(-10, 10), maxgen=300, weight=1, lr=(0.49445, 1.49445), cycle_gen=10, func=bf.func1):
         self.sizepop = sizepop
         self.rangepop = rangepop
         self.rangespeed = rangespeed
@@ -44,6 +49,8 @@ class PSO():
         pop[best_fitnessindex] = pop[worst_fitnessindex].copy()
 
     def social_distancing(self, pop, threshold=0.5):
+        # 阈值
+        threshold = np.sqrt(self.rangespeed[1])
         # 速度
         reject_v = np.zeros((self.sizepop, 2))
         # 要访问的粒子
@@ -55,12 +62,14 @@ class PSO():
                 if j == -1:
                     continue
                 if np.linalg.norm(pop[i] - pop[j]) < threshold:
-                    # choose the one that has the smaller absolute value
-                    new_v = 1 / (pop[j] - pop[i])
-                    new_v[new_v>self.rangespeed[1]] = self.rangespeed[1]
-                    new_v[new_v<self.rangespeed[0]] = self.rangespeed[0]
-                    reject_v[i] = new_v
-                    reject_v[j] = -new_v
+                    new_v = pop[j] - pop[i]
+                    gt_zero = np.where(new_v > 0)
+                    lt_zero = np.where(new_v < 0)
+                    new_v = new_v**2
+                    new_v[gt_zero] = np.maximum(self.rangespeed[1]-new_v[gt_zero],0)
+                    new_v[lt_zero] = np.minimum(self.rangespeed[0]-new_v[lt_zero],0)
+                    reject_v[i] += new_v
+                    reject_v[j] -= new_v
                 to_visit[j, i] = -1
         return reject_v
 
@@ -111,37 +120,40 @@ class PSO():
         plt.show()
 
 def test(psos, funcs):
-    params = []
+
     for func in funcs:
         result = []
+        params = []
         for pso in psos:
             pso.func = func
+            if func.__name__[-1] == '2':
+                pso.rangepop = [-10, 10]
+                pso.rangespeed = [-1, 1]
+            elif func.__name__[-1] == '5':
+                pso.rangepop = [-30, 30]
+                pso.rangespeed = [-3, 3]
             pso.run()
-            params.append(pso.sizepop)
+            params.append(pso.maxgen)
             result.append(pso.result[-1])
         plt.plot(params, result, label=func.__name__)
-    plt.xlabel('sizepop')
-    plt.ylabel('fitness')
+    plt.xlabel('迭代次数')
+    plt.ylabel('适应度值')
     plt.legend()
+    # plt.savefig(u'figure/iteration.png',bbox_inches='tight')
     plt.show()
 
 
 
 if __name__ == '__main__':
-    sizepop = 100
-    # rangepop = [10, 10]
-    # rangespeed = [0.1, 0.1]
-    maxgen = 100
     # weight = 0.5
     # lr = [0.5, 0.5]
-
     funcs = [bf.func1,bf.func2,bf.func3,bf.func4,bf.func5]
-    pso10 = PSO(sizepop=10, maxgen=maxgen)
-    pso50 = PSO(sizepop=50, maxgen=maxgen)
-    pso100 = PSO(sizepop=100, maxgen=maxgen)
-    pso500 = PSO(sizepop=500, maxgen=maxgen)
-    pso1000 = PSO(sizepop=1000, maxgen=maxgen)
-    psos = [pso10, pso100, pso1000]
+    pso10 = PSO(sizepop=10)
+    pso100 = PSO(sizepop=100)
+    pso1000 = PSO(sizepop=1000)
+    pso10000 = PSO(sizepop=10000)
+    psos = [pso10,pso100,pso1000,pso10000]
+
     test(psos, funcs)
 
 
