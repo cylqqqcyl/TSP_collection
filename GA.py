@@ -12,7 +12,7 @@ class GA(object):
         self.iteration = iteration
         self.location = data
         self.ga_choose_ratio = 0.2
-        self.mutate_ratio = 0.05
+        self.mutate_ratio = 0.2
         # fruits中存每一个个体是下标的list
         self.dis_mat = self.compute_dis_mat(num_city, data)
         self.fruits = self.greedy_init(self.dis_mat,num_total,num_city)
@@ -220,17 +220,26 @@ class GA(object):
     def run(self):
         BEST_LIST = None
         best_score = -math.inf
+        count = 0
+        i = 0
         self.best_record = []
-        for i in range(1, self.iteration + 1):
+        while count < 500:
             tmp_best_one, tmp_best_score = self.ga()
             self.iter_x.append(i)
             self.iter_y.append(1. / tmp_best_score)
             if tmp_best_score > best_score:
+                if abs(1. / tmp_best_score - 1. / best_score) < 0.1:
+                    pass
+                else:
+                    count = 0
                 best_score = tmp_best_score
                 BEST_LIST = tmp_best_one
-            self.best_record.append(1./best_score)
-            print(i,1./best_score)
-        print(1./best_score)
+            self.best_record.append(1. / best_score)
+            count += 1
+            print(i, 1. / best_score, count)
+            i += 1
+        print(1. / best_score)
+        self.iteration = i
         return self.location[BEST_LIST], 1. / best_score
 
 
