@@ -54,21 +54,22 @@ def func5(x):
 
 def func6(x):
     # Rastrigin函数
-    f = 10 * 2
+    f = 0
     for i in x:
-        f += i ** 2 - 10 * np.cos(2 * np.pi * i)
+        f += i ** 2 - 10 * np.cos(2 * np.pi * i) + 10
     return f
 
 
-def func7(x, d=2):
+def func7(x):
     # Ackley函数
+    d = len(x)
     f = 0
     sum1 = 0
     sum2 = 0
     for i in x:
         sum1 += i ** 2
         sum2 += np.cos(2 * np.pi * i)
-    f = -20 * np.exp(-0.2 * np.sqrt(sum1 / d)) - np.exp(sum2 / d) + 20 + math.e
+    f = -20 * np.exp(-0.2 * np.sqrt(sum1 / d)) - np.exp(sum2 / d) + 20 + np.e
     return f
 
 
@@ -89,9 +90,8 @@ def func9(x):
         yi = 1 + (xi + 1) / 4
         return yi
 
-    y = []
-    for i in x:
-        y.append(func_y(i))
+    y = func_y(x)
+
     sum1 = 0
     sum2 = 0
     for i in range(len(y) - 1):
@@ -105,21 +105,30 @@ def func_u(xi, a, k, m):
     gta_mask = np.where(xi > a)
     lta_mask = np.where(xi < -a)
     zero_mask = np.where(np.abs(xi) <= a)
-    for i in gta_mask:
-        xi[i] = k * (xi[i] - a) ** m
-    for i in lta_mask:
-        xi[i] = k * (-xi[i] - a) ** m
-    for i in zero_mask:
-        xi[i] = 0
+    if type(xi) is np.ndarray:
+        if len(gta_mask[0]) > 0:
+            xi[gta_mask] = k * (xi[gta_mask] - a) ** m + a ** m
+        if len(lta_mask[0]) > 0:
+            xi[lta_mask] = k * (-xi[lta_mask] - a) ** m + a ** m
+        if len(zero_mask[0]) > 0:
+            xi[zero_mask] = 0
+    else:
+        if xi > a:
+            xi = k * (xi - a) ** m + a ** m
+        elif xi < -a:
+            xi = k * (-xi - a) ** m + a ** m
+        else:
+            xi = 0
     return xi
 
 
 if __name__ == '__main__':
-    x = np.linspace(-50, 50, 100)
-    y = np.linspace(-50, 50, 100)
+    x = np.linspace(-5, 5, 100)
+    y = np.linspace(-5, 5, 100)
     X, Y = np.meshgrid(x, y)
 
-    Z = func8([X, Y])
+
+    Z = func9(np.asarray([X, Y]))
 
 
     fig = plt.figure()

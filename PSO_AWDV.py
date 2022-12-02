@@ -10,22 +10,21 @@ plt.rcParams['font.family'] = 'JBHGSS2'
 
 plt.rcParams['savefig.dpi'] = 300  # 图片像素
 plt.rcParams['figure.dpi'] = 300  # 分辨率
-plt.rcParams['font.size'] = 14
-plt.rcParams['font.weight'] = 'bold'
-plt.rcParams['figure.figsize'] = (10.0, 6.0)
 # plt.rcParams['figure.figsize'] = (6.0, 6.0)
-class PSO: # 原版PSO
-    def __init__(self, sizepop=130, rangepop=(-100,100), rangespeed=(-1, 1), maxgen=900, weight=1, lr=(1.49445, 1.49445), cycle_gen=50, func=bf.func1, dim=20):
+class PSO_AWDV: # PSO-ADWV
+    def __init__(self, sizepop=130, rangepop=(-100,100), rangespeed=(-1, 1), maxgen=900, weight=1, c1=(2.5,0.5), c2=(0.5,2.5), cycle_gen=10, func=bf.func1, dim=20):
         self.sizepop = sizepop
         self.rangepop = rangepop
         self.rangespeed = rangespeed
         self.maxgen = maxgen
         self.weight = weight
-        self.lr = lr
         self.result = np.zeros(maxgen)
         self.cycle_gen = cycle_gen
         self.func = func
         self.dim = dim
+        self.c1 = c1
+        self.c2 = c2
+        self.lr = [0,0]
 
 
     def initpopvfit(self):
@@ -46,9 +45,10 @@ class PSO: # 原版PSO
         pbestpop = pop.copy()
         return gbestpop, gbestfitness, pbestpop, pbestfitness
 
-    def update(self, gen, pop, v, fitness, gbestpop, gbestfitness, pbestpop, pbestfitness):
+    def update(self, gen, pop, v, prev, fitness, gbestpop, gbestfitness, pbestpop, pbestfitness):
+        new_prev = v
         # 更新速度
-        v = self.weight * v + self.lr[0] * np.random.rand() * (pbestpop - pop) + self.lr[1] * np.random.rand() * (
+        v = self.weight * v + (1-self.weight)*prev + self.lr[0] * np.random.rand() * (pbestpop - pop) + self.lr[1] * np.random.rand() * (
                     gbestpop - pop)
         # 更新位置
         v = np.maximum(v, self.rangespeed[0])
@@ -67,19 +67,27 @@ class PSO: # 原版PSO
             if fitness[i] < pbestfitness[i]:
                 pbestfitness[i] = fitness[i]
                 pbestpop[i] = pop[i].copy()
-        return pop, v, fitness, gbestpop, gbestfitness, pbestpop, pbestfitness
+        return pop, v, new_prev, fitness, gbestpop, gbestfitness, pbestpop, pbestfitness
 
     def run(self):
         # 初始化粒子位置、速度、适应度值
         pop, v, fitness = self.initpopvfit()
+        prev = v
         # 初始化群体最优、个体最优
         gbestpop, gbestfitness, pbestpop, pbestfitness = self.getinitbest(fitness, pop)
         # 迭代
         for gen in range(self.maxgen):
+            E = (abs(max(fitness)) - abs(min(fitness)))/abs(max(fitness))
+
+            self.weight = 1-0.9/(1+math.exp(0.5*E))
+
+            self.lr[0] = (self.c1[0] - self.c1[1]) * (self.maxgen - gen) / self.maxgen + self.c1[1]
+            self.lr[1] = (self.c2[0] - self.c2[1]) * (self.maxgen - gen) / self.maxgen + self.c2[1]
             # 更新粒子位置、速度、适应度值
-            pop, v, fitness, gbestpop, gbestfitness, pbestpop, pbestfitness = self.update(gen,pop, v, fitness, gbestpop,
+            pop, v, prev, fitness, gbestpop, gbestfitness, pbestpop, pbestfitness = self.update(gen,pop, v, prev, fitness, gbestpop,
                                                                                         gbestfitness, pbestpop,
                                                                                         pbestfitness)
+
             # 每隔10代打印一次最优值
             if gen % 10 == 0:
                 print('第{}代的最优值为：{}'.format(gen, gbestfitness))
@@ -104,11 +112,7 @@ if __name__ == '__main__':
     maxgen = 1000
     # weight = 0.5
     # lr = [0.5, 0.5]
-    pso = PSO(sizepop=sizepop, maxgen=maxgen,func=bf.func9,rangepop=(-5.12,5.12))
+    pso = PSO(sizepop=sizepop, maxgen=maxgen)
     pso.run()
     pso.plot()
-    plt.xlabel('generation')
-    plt.ylabel('fitness')
-    plt.savefig('PSO.png')
-    plt.show()
 
