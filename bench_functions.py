@@ -6,7 +6,6 @@ from mpl_toolkits.mplot3d import Axes3D
 from numba import jit
 
 
-@jit(nopython=True)
 def func1(x):
     # Sphere函数
     f = 0
@@ -14,7 +13,6 @@ def func1(x):
         f += i ** 2
     return f
 
-@jit(nopython=True)
 def func2(x):
     # Schwefel 2.22函数
     f = 0
@@ -26,7 +24,6 @@ def func2(x):
     f = sum + prod
     return f
 
-@jit(nopython=True)
 def func3(x):
     # Schwefel 1.2函数
     f = 0
@@ -37,7 +34,6 @@ def func3(x):
         f += sum ** 2
     return f
 
-@jit(nopython=True)
 def func4(x):
     # Schwefel 2.21函数
     f = 0
@@ -45,7 +41,6 @@ def func4(x):
         f = np.maximum(f, abs(i))
     return f
 
-@jit(nopython=True)
 def func5(x):
     # Rosenbrock函数
     f = 0
@@ -53,7 +48,6 @@ def func5(x):
         f += 100 * (x[i + 1] - x[i] ** 2) ** 2 + (1 - x[i]) ** 2
     return f
 
-@jit(nopython=True)
 def func6(x):
     # Rastrigin函数
     f = 0
@@ -61,7 +55,7 @@ def func6(x):
         f += i ** 2 - 10 * np.cos(2 * np.pi * i) + 10
     return f
 
-@jit(nopython=True)
+
 def func7(x):
     # Ackley函数
     d = len(x)
@@ -74,7 +68,6 @@ def func7(x):
     f = -20 * np.exp(-0.2 * np.sqrt(sum1 / d)) - np.exp(sum2 / d) + 20 + np.e
     return f
 
-@jit(nopython=True)
 def func8(x):
     # Griewank函数
     f = 0
@@ -85,7 +78,6 @@ def func8(x):
     f = f / 4000 - prod + 1
     return f
 
-@jit(nopython=True)
 def func9_noplot(x):
     # Penalized 1函数
     def func_y(xi):
@@ -103,7 +95,6 @@ def func9_noplot(x):
     f = np.pi / len(y) * (10 * np.sin(np.pi * y[0]) ** 2 + sum1 + (y[-1] - 1) ** 2) + sum2
     return f
 
-@jit(nopython=True)
 def func_u_noplot(xi, a, k, m):
     if xi > a:
         u = k * (xi - a) ** m
