@@ -91,7 +91,7 @@ class PSO_LCSD():
                 to_visit[j, i] = -1
         return reject_v
 
-    @jit(nopython=True)
+    @jit
     def update(self, gen, pop, v, fitness, gbestpop, gbestfitness, pbestpop, pbestfitness):
         # 排斥速度
         reject_v = self.social_distancing(pop)
@@ -118,7 +118,7 @@ class PSO_LCSD():
             self.life_cycle(pop, fitness)
         return pop, v, fitness, gbestpop, gbestfitness, pbestpop, pbestfitness
 
-    @jit(nopython=True)
+    @jit
     def run(self):
         # 初始化粒子位置、速度、适应度值
         pop, v, fitness = self.initpopvfit()
