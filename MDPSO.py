@@ -112,20 +112,20 @@ class MDPSO: # MDPSO
                 #estate = 2
                 self.si = Ef
                 self.sg = 0
-                self.ti = np.random.randint(gen)
+                self.ti = np.random.randint(max(gen,1))
                 self.tg = 0
             elif Ef < 0.75:
                 #estate = 3
                 self.si = 0
                 self.sg = Ef
                 self.ti = 0
-                self.tg = np.random.randint(gen)
+                self.tg = np.random.randint(max(gen,1))
             else:
                 #estate = 4
                 self.si = Ef
                 self.sg = Ef
-                self.ti = np.random.randint(gen)
-                self.tg = np.random.randint(gen)
+                self.ti = np.random.randint(max(gen,1))
+                self.tg = np.random.randint(max(gen,1))
             self.weight = self.weight2 + (self.weight1 - self.weight2) * ((self.maxgen - gen) / self.maxgen)
             self.lr[0] = 2 * (self.maxgen - gen) / (self.maxgen) + 0.5
             self.lr[1] = - 2 * (self.maxgen - gen) / (self.maxgen) + 2.5
