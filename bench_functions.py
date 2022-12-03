@@ -13,6 +13,7 @@ def func1(x):
         f += i ** 2
     return f
 
+
 def func2(x):
     # Schwefel 2.22函数
     f = 0
@@ -24,6 +25,7 @@ def func2(x):
     f = sum + prod
     return f
 
+
 def func3(x):
     # Schwefel 1.2函数
     f = 0
@@ -34,6 +36,7 @@ def func3(x):
         f += sum ** 2
     return f
 
+
 def func4(x):
     # Schwefel 2.21函数
     f = 0
@@ -41,12 +44,14 @@ def func4(x):
         f = np.maximum(f, abs(i))
     return f
 
+
 def func5(x):
     # Rosenbrock函数
     f = 0
     for i in range(len(x) - 1):
         f += 100 * (x[i + 1] - x[i] ** 2) ** 2 + (1 - x[i]) ** 2
     return f
+
 
 def func6(x):
     # Rastrigin函数
@@ -68,6 +73,7 @@ def func7(x):
     f = -20 * np.exp(-0.2 * np.sqrt(sum1 / d)) - np.exp(sum2 / d) + 20 + np.e
     return f
 
+
 def func8(x):
     # Griewank函数
     f = 0
@@ -78,56 +84,43 @@ def func8(x):
     f = f / 4000 - prod + 1
     return f
 
+
 def func9(x):
-    # Penalized 1函数
-    def func_y(xi):
-        yi = 1 + (xi + 1) / 4
-        return yi
-
-    y = func_y(x)
-
-    sum1 = 0
-    sum2 = 0
-    for i in range(len(y) - 1):
-        sum1 += (y[i] - 1) ** 2 * (1 + 10 * np.sin(np.pi * y[i + 1]) ** 2)
-        sum2 += func_u(y[i], 10, 100, 4)
-    sum2 += func_u(y[-1], 10, 100, 4)
-    f = np.pi / len(y) * (10 * np.sin(np.pi * y[0]) ** 2 + sum1 + (y[-1] - 1) ** 2) + sum2
+    # Alpine函数
+    f = 0
+    for i in x:
+        f += abs(i * np.sin(i) + 0.1 * i)
     return f
 
-def func_u(xi, a, k, m):
-    if xi.size == 1:
-        if xi > a:
-            return k * (xi - a) ** 2
-        elif xi < -a:
-            return k * (-xi - a) ** 2
-        else:
-            return 0
-    else:
-        gta_mask = np.where(xi > a)
-        lta_mask = np.where(xi < -a)
-        zero_mask = np.where(np.abs(xi) <= a)
-        if len(gta_mask[0]) > 0:
-            xi[gta_mask] = k * (xi[gta_mask] - a) ** m + a ** m
-        if len(lta_mask[0]) > 0:
-            xi[lta_mask] = k * (-xi[lta_mask] - a) ** m + a ** m
-        if len(zero_mask[0]) > 0:
-            xi[zero_mask] = 0
-    return xi
+
 
 
 if __name__ == '__main__':
-    x = np.linspace(-5, 5, 100)
-    y = np.linspace(-5, 5, 100)
-    X, Y = np.meshgrid(x, y)
+    funcs = [func1, func2, func3, func4, func5, func6, func7, func8, func9]
+    funcs = [func9]
+    for func in funcs:
+        test_range = 100
+        if func.__name__[-1] == '2':
+            test_range = 10
+        elif func.__name__[-1] == '5':
+            test_range = 30
+        elif func.__name__[-1] == '6':
+            test_range = 5.12
+        elif func.__name__[-1] == '7':
+            test_range = 32
+        elif func.__name__[-1] == '8':
+            test_range = 600
+        elif func.__name__[-1] == '9':
+            test_range = 10
+        x = np.linspace(-test_range, test_range, 100)
+        y = np.linspace(-test_range, test_range, 100)
+        X, Y = np.meshgrid(x, y)
 
+        Z = func(np.asarray([X, Y]))
 
-    Z = func9(np.asarray([X, Y]))
-
-
-    fig = plt.figure()
-    ax = Axes3D(fig)
-    ax.contour(X, Y, Z, 10,offset=0, cmap='rainbow', linestyles="solid", alpha=0.5)
-    ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap='rainbow')
-
-    plt.show()
+        fig = plt.figure()
+        ax = Axes3D(fig)
+        ax.contour(X, Y, Z, 10, offset=0, cmap='rainbow', linestyles="solid", alpha=0.5)
+        ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap='rainbow')
+        plt.savefig(u'figure/{}_3d.png'.format(func.__name__))
+        plt.show()
