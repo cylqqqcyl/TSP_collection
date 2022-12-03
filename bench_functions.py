@@ -89,7 +89,7 @@ def func9(x):
     # Alpine函数
     f = 0
     for i in x:
-        f += abs(i * np.sin(i) + 0.1 * i)
+        f += np.abs(i * np.sin(i) + 0.1 * i)
     return f
 
 

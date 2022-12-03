@@ -261,7 +261,7 @@ if __name__ == '__main__':
     all_funcs = [bf.func1,bf.func2,bf.func3,bf.func4,bf.func5,bf.func6,bf.func7,bf.func8,bf.func9]
     # all_funcs = [bf.func1]
 
-    for func in all_funcs[1:]:
+    for func in all_funcs[2:]:
         pso_og = PSO(dim=100)
         pso_awdv = PSO_AWDV(dim=100)
         mdpso = MDPSO(dim=100)
