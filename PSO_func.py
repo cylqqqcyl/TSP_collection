@@ -167,19 +167,31 @@ def test_parameter(psos, funcs):
     plt.show()
 
 
-def test_fitness(psos,func,iters=1,stride=100):
+def test_fitness(psos,func,iters=10,stride=100):
     results = np.zeros((iters,len(psos), psos[0].maxgen//stride))
     avg_time = np.zeros(len(psos))
-    for iter in range(iters):
+    for iter in tqdm(range(iters)):
         for i, pso in enumerate(psos):
             t1 = time.time()
             pso.func = func
             if func.__name__[-1] == '2':
                 pso.rangepop = [-10, 10]
-                pso.rangespeed = [-1, 1]
+                pso.rangespeed = [-0.1, 0.1]
             elif func.__name__[-1] == '5':
                 pso.rangepop = [-30, 30]
-                pso.rangespeed = [-3, 3]
+                pso.rangespeed = [-0.3, 0.3]
+            elif func.__name__[-1] == '6':
+                pso.rangepop = [-5.12, 5.12]
+                pso.rangespeed = [-0.0512, 0.0512]
+            elif func.__name__[-1] == '7':
+                pso.rangepop = [-32, 32]
+                pso.rangespeed = [-0.32, 0.32]
+            elif func.__name__[-1] == '8':
+                pso.rangepop = [-600, 600]
+                pso.rangespeed = [-6, 6]
+            elif func.__name__[-1] == '9':
+                pso.rangepop = [-50, 50]
+                pso.rangespeed = [-0.5, 0.5]
             pso.run()
             t2 = time.time()
             avg_time[i] += t2 - t1
@@ -238,20 +250,21 @@ def test_2_dim(pso,func):
 
 
 if __name__ == '__main__':
-    iters = 10
+    iters = 100
     funcs = [bf.func1,bf.func2,bf.func3,bf.func4,bf.func5]
-    # all_funcs = [bf.func1,bf.func2,bf.func3,bf.func4,bf.func5,bf.func6,bf.func7,bf.func8,bf.func9]
-    all_funcs = [bf.func1]
+    all_funcs = [bf.func1,bf.func2,bf.func3,bf.func4,bf.func5,bf.func6,bf.func7,bf.func8,bf.func9]
+    # all_funcs = [bf.func1]
 
-    pso_og = PSO(dim=100, func=bf.func1)
-    pso_awdv = PSO_AWDV(dim=100, func=bf.func1)
-    mdpso = MDPSO(dim=100, func=bf.func1)
-    pso_lcsd = PSO_LCSD(dim=100, func=bf.func1)
-    psos = [pso_og,pso_awdv,mdpso,pso_lcsd]
+    for func in all_funcs:
+        pso_og = PSO(dim=100)
+        pso_awdv = PSO_AWDV(dim=100)
+        mdpso = MDPSO(dim=100)
+        pso_lcsd = PSO_LCSD(dim=100)
+        psos = [pso_og,pso_awdv,mdpso,pso_lcsd]
+        test_fitness(psos, func, iters=iters, stride=100)
 
 
     # test_parameter(psos, funcs)
-    test_fitness(psos, bf.func1)
     # test_2_dim(pso_lcsd,bf.func7)
 
 
