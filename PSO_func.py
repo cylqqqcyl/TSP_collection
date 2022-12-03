@@ -252,7 +252,7 @@ def test_2_dim(pso,func):
 if __name__ == '__main__':
     iters = 100
     funcs = [bf.func1,bf.func2,bf.func3,bf.func4,bf.func5]
-    all_funcs = [bf.func1,bf.func2,bf.func3,bf.func4,bf.func5,bf.func6,bf.func7,bf.func8,bf.func9]
+    all_funcs = [bf.func1,bf.func2,bf.func3,bf.func4,bf.func5,bf.func6,bf.func7,bf.func8,bf.func9_noplot]
     # all_funcs = [bf.func1]
 
     for func in all_funcs:
