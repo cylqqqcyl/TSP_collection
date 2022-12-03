@@ -161,7 +161,7 @@ def test_parameter(psos, funcs):
     plt.savefig(u'figure/cycle.png',bbox_inches='tight')
     plt.show()
 
-def test_fitness(psos,func,iters=1,stride=100):
+def test_fitness(psos,func,iters=10,stride=100):
     results = np.zeros((iters,len(psos), psos[0].maxgen//stride))
     for iter in tqdm(range(iters)):
         for i, pso in enumerate(psos):
@@ -195,6 +195,7 @@ def test_fitness(psos,func,iters=1,stride=100):
 
 if __name__ == '__main__':
     funcs = [bf.func1,bf.func2,bf.func3,bf.func4,bf.func5]
+    all_funcs = [bf.func1,bf.func2,bf.func3,bf.func4,bf.func5,bf.func6,bf.func7,bf.func8,bf.func9]
     pso_lcsd = PSO_LCSD(dim=50, func=bf.func1)
     pso_og = PSO(dim=50, func=bf.func1)
     pso_awdv = PSO_AWDV(dim=50, func=bf.func1)
