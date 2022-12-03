@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import bench_functions as bf
-import math
+import time
 from mpl_toolkits.mplot3d import Axes3D
 from PSO_og import PSO
 from PSO_AWDV import PSO_AWDV
@@ -33,6 +33,7 @@ class PSO_LCSD():
         self.func = func
         self.dim = dim
         self.count = np.zeros(sizepop)
+        self.final_pop = np.zeros((sizepop, dim))
 
 
     def initpopvfit(self):
@@ -132,6 +133,7 @@ class PSO_LCSD():
             if gen % 10 == 0:
                 print('第{}代的最优值为：{}'.format(gen, gbestfitness))
             self.result[gen] = gbestfitness
+        self.final_pop = pop
 
     def plot(self):
         plt.plot(self.result)
@@ -161,10 +163,12 @@ def test_parameter(psos, funcs):
     plt.savefig(u'figure/cycle.png',bbox_inches='tight')
     plt.show()
 
-def test_fitness(psos,func,iters=10,stride=100):
+def test_fitness(psos,func,iters=1,stride=100):
     results = np.zeros((iters,len(psos), psos[0].maxgen//stride))
+    avg_time = np.zeros(len(psos))
     for iter in tqdm(range(iters)):
         for i, pso in enumerate(psos):
+            t1 = time.time()
             pso.func = func
             if func.__name__[-1] == '2':
                 pso.rangepop = [-10, 10]
@@ -173,6 +177,8 @@ def test_fitness(psos,func,iters=10,stride=100):
                 pso.rangepop = [-30, 30]
                 pso.rangespeed = [-3, 3]
             pso.run()
+            t2 = time.time()
+            avg_time[i] += t2 - t1
             for j in range(pso.maxgen//stride):
                 results[iter,i,j] += pso.result[j*stride]
                 # results[i, j] = np.log(pso.result[j*stride])
@@ -183,30 +189,63 @@ def test_fitness(psos,func,iters=10,stride=100):
         #     results[i, j] = np.log(pso.result[j*stride])
         plt.plot(np.log(np.mean(results[:,i,:],axis=0)),label=pso.__class__.__name__)
     plt.xticks(range(len(psos[0].result)//stride), range(0,psos[0].maxgen,stride))
-    plt.xlabel('generation')
-    plt.ylabel('best fitness')
+    plt.xlabel('迭代次数')
+    plt.ylabel('平均适应度log(f(x))')
     plt.legend()
     plt.savefig(u'figure/{}.png'.format(func.__name__), bbox_inches='tight')
     plt.show()
+    # write results to txt
+    with open(u'figure/{}.txt'.format(func.__name__),'w') as f:
+        for i, pso in enumerate(psos):
+            f.write(pso.__class__.__name__ + '\t'+ 'max' + '\t' + 'min' + '\t' + 'mean' +'\t' + 'std'+ '\t'+ 'time' +'\n')
+            f.write(str(np.max(results[:,i,-1])) + '&\t' + str(np.min(results[:,i,-1])) + '&\t' + str(np.mean(results[:,i,-1])) + '&\t' + str(np.std(results[:,i,-1])) +
+                    '&\t'+ str(avg_time[i]/iters) + '\\\\ \n')
 
 
+
+def test_2_dim(pso,func):
+    pso_og = PSO()
+    pso_og.func = func
+    pso_og.dim = 2
+    pso_og.rangepop = [-10, 10]
+    pso_og.run()
+    plt.scatter(pso_og.final_pop[:, 0], pso_og.final_pop[:, 1], label='PSO',c='skyblue', s=10)
+
+    pso.func = func
+    pso.dim = 2
+    pso.rangepop = [-10, 10]
+    pso.run()
+    plt.scatter(pso.final_pop[:, 0], pso.final_pop[:, 1], label=pso.__class__.__name__,c='salmon', s=10)
+
+    x = np.linspace(-10, 10, 100)
+    y = np.linspace(-10, 10, 100)
+    X, Y = np.meshgrid(x, y)
+
+    Z = func(np.asarray([X, Y]))
+    plt.contour(X, Y, Z, 10, cmap='rainbow', linewidths=0.5)
+    plt.axvline(x=0, c="grey")
+    plt.axhline(y=0, c="grey")
+    plt.legend()
+    plt.savefig(u'figure/{}_2dim.png'.format(func.__name__), bbox_inches='tight')
+    plt.show()
 
 
 
 if __name__ == '__main__':
     funcs = [bf.func1,bf.func2,bf.func3,bf.func4,bf.func5]
     all_funcs = [bf.func1,bf.func2,bf.func3,bf.func4,bf.func5,bf.func6,bf.func7,bf.func8,bf.func9]
-    pso_lcsd = PSO_LCSD(dim=50, func=bf.func1)
-    pso_og = PSO(dim=50, func=bf.func1)
-    pso_awdv = PSO_AWDV(dim=50, func=bf.func1)
-    mdpso = MDPSO(dim=50, func=bf.func1)
-    psos = [pso_lcsd,pso_og,pso_awdv,mdpso]
+
+    pso_og = PSO(dim=100, func=bf.func1)
+    pso_awdv = PSO_AWDV(dim=100, func=bf.func1)
+    mdpso = MDPSO(dim=100, func=bf.func1)
+    pso_lcsd = PSO_LCSD(dim=100, func=bf.func1)
+    psos = [pso_og,pso_awdv,mdpso,pso_lcsd]
 
 
 
 
     # test_parameter(psos, funcs)
-    test_fitness(psos, bf.func1)
-
+    # test_fitness(psos, bf.func1)
+    test_2_dim(pso_lcsd,bf.func1)
 
 

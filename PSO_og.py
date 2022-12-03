@@ -26,6 +26,7 @@ class PSO: # 原版PSO
         self.cycle_gen = cycle_gen
         self.func = func
         self.dim = dim
+        self.final_pop = np.zeros((self.sizepop, self.dim))
 
 
     def initpopvfit(self):
@@ -84,6 +85,7 @@ class PSO: # 原版PSO
             if gen % 10 == 0:
                 print('第{}代的最优值为：{}'.format(gen, gbestfitness))
             self.result[gen] = gbestfitness
+        self.final_pop = pop
 
     def plot(self):
         plt.plot(self.result)
