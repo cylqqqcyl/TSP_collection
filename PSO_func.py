@@ -161,8 +161,8 @@ def test_parameter(psos, funcs):
     plt.savefig(u'figure/cycle.png',bbox_inches='tight')
     plt.show()
 
-def test_fitness(psos,func,iters=10,stride=100):
-    results = np.zeros((len(psos), psos[0].maxgen//stride))
+def test_fitness(psos,func,iters=1,stride=100):
+    results = np.zeros((iters,len(psos), psos[0].maxgen//stride))
     for iter in tqdm(range(iters)):
         for i, pso in enumerate(psos):
             pso.func = func
@@ -174,14 +174,14 @@ def test_fitness(psos,func,iters=10,stride=100):
                 pso.rangespeed = [-3, 3]
             pso.run()
             for j in range(pso.maxgen//stride):
-                results[i,j] += pso.result[j*stride]
+                results[iter,i,j] += pso.result[j*stride]
                 # results[i, j] = np.log(pso.result[j*stride])
 
     for i, pso in enumerate(psos):
-        for j in range(pso.maxgen//stride):
-            results[i,j] = np.log(results[i,j]/iters)
-            # results[i, j] = np.log(pso.result[j*stride])
-        plt.plot(results[i], label=pso.__class__.__name__)
+        # for j in range(pso.maxgen//stride):
+        #     results[:,i,j] = np.log(results[:,i,j]
+        #     results[i, j] = np.log(pso.result[j*stride])
+        plt.plot(np.log(np.mean(results[:,i,:],axis=0)),label=pso.__class__.__name__)
     plt.xticks(range(len(psos[0].result)//stride), range(0,psos[0].maxgen,stride))
     plt.xlabel('generation')
     plt.ylabel('best fitness')
