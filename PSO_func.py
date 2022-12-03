@@ -261,31 +261,31 @@ if __name__ == '__main__':
     all_funcs = [bf.func1,bf.func2,bf.func3,bf.func4,bf.func5,bf.func6,bf.func7,bf.func8,bf.func9]
     # all_funcs = [bf.func1]
 
-    # for func in all_funcs:
-    #     pso_og = PSO(dim=100)
-    #     pso_awdv = PSO_AWDV(dim=100)
-    #     mdpso = MDPSO(dim=100)
-    #     pso_lcsd = PSO_LCSD(dim=100)
-    #     psos = [pso_og,pso_awdv,mdpso,pso_lcsd]
-    #     test_fitness(psos, func, iters=iters, stride=100)
+    for func in all_funcs[1:]:
+        pso_og = PSO(dim=100)
+        pso_awdv = PSO_AWDV(dim=100)
+        mdpso = MDPSO(dim=100)
+        pso_lcsd = PSO_LCSD(dim=100)
+        psos = [pso_og,pso_awdv,mdpso,pso_lcsd]
+        test_fitness(psos, func, iters=iters, stride=100)
 
-    pso_lcsd = PSO_LCSD(dim=2)
-    # test_parameter(psos, funcs)
-    for func in all_funcs[-1:]:
-        test_range = [-100, 100]
-        if func.__name__[-1] == '2':
-            test_range = [-10,10]
-        elif func.__name__[-1] == '5':
-            test_range = [-30,30]
-        elif func.__name__[-1] == '6':
-            test_range = [-5.12,5.12]
-        elif func.__name__[-1] == '7':
-            test_range = [-32,32]
-        elif func.__name__[-1] == '8':
-            test_range = [-600,600]
-        elif func.__name__[-1] == '9':
-            test_range = [-10,10]
-        test_2_dim(pso_lcsd, func, test_range)
+    # pso_lcsd = PSO_LCSD(dim=2)
+    # # test_parameter(psos, funcs)
+    # for func in all_funcs[-1:]:
+    #     test_range = [-100, 100]
+    #     if func.__name__[-1] == '2':
+    #         test_range = [-10,10]
+    #     elif func.__name__[-1] == '5':
+    #         test_range = [-30,30]
+    #     elif func.__name__[-1] == '6':
+    #         test_range = [-5.12,5.12]
+    #     elif func.__name__[-1] == '7':
+    #         test_range = [-32,32]
+    #     elif func.__name__[-1] == '8':
+    #         test_range = [-600,600]
+    #     elif func.__name__[-1] == '9':
+    #         test_range = [-10,10]
+    #     test_2_dim(pso_lcsd, func, test_range)
 
 
 
