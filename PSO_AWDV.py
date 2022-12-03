@@ -4,13 +4,15 @@ import matplotlib.pyplot as plt
 import bench_functions as bf
 import math
 from mpl_toolkits.mplot3d import Axes3D
-
+from numba.experimental import jitclass
 
 plt.rcParams['font.family'] = 'JBHGSS2'
 
 plt.rcParams['savefig.dpi'] = 300  # 图片像素
 plt.rcParams['figure.dpi'] = 300  # 分辨率
 # plt.rcParams['figure.figsize'] = (6.0, 6.0)
+
+
 class PSO_AWDV: # PSO-ADWV
     def __init__(self, sizepop=130, rangepop=(-100,100), rangespeed=(-1, 1), maxgen=900, weight=1, c1=(2.5,0.5), c2=(0.5,2.5), cycle_gen=10, func=bf.func1, dim=20):
         self.sizepop = sizepop
@@ -112,7 +114,7 @@ if __name__ == '__main__':
     maxgen = 1000
     # weight = 0.5
     # lr = [0.5, 0.5]
-    pso = PSO(sizepop=sizepop, maxgen=maxgen)
+    pso = PSO_AWDV(sizepop=sizepop, maxgen=maxgen)
     pso.run()
     pso.plot()
 

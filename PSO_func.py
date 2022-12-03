@@ -8,6 +8,8 @@ from PSO_og import PSO
 from PSO_AWDV import PSO_AWDV
 from MDPSO import MDPSO
 from tqdm import tqdm
+from numba import jit
+from numba.experimental import jitclass
 
 plt.rcParams['font.family'] = 'JBHGSS2'
 plt.rcParams['axes.unicode_minus'] = False
@@ -89,6 +91,7 @@ class PSO_LCSD():
                 to_visit[j, i] = -1
         return reject_v
 
+    @jit(nopython=True)
     def update(self, gen, pop, v, fitness, gbestpop, gbestfitness, pbestpop, pbestfitness):
         # 排斥速度
         reject_v = self.social_distancing(pop)
@@ -115,6 +118,7 @@ class PSO_LCSD():
             self.life_cycle(pop, fitness)
         return pop, v, fitness, gbestpop, gbestfitness, pbestpop, pbestfitness
 
+    @jit(nopython=True)
     def run(self):
         # 初始化粒子位置、速度、适应度值
         pop, v, fitness = self.initpopvfit()
@@ -141,6 +145,7 @@ class PSO_LCSD():
         # plt.ylabel('fitness')
         # plt.show()
 
+
 def test_parameter(psos, funcs):
     for func in funcs:
         result = []
@@ -163,10 +168,11 @@ def test_parameter(psos, funcs):
     plt.savefig(u'figure/cycle.png',bbox_inches='tight')
     plt.show()
 
+
 def test_fitness(psos,func,iters=1,stride=100):
     results = np.zeros((iters,len(psos), psos[0].maxgen//stride))
     avg_time = np.zeros(len(psos))
-    for iter in tqdm(range(iters)):
+    for iter in range(iters):
         for i, pso in enumerate(psos):
             t1 = time.time()
             pso.func = func
@@ -195,11 +201,13 @@ def test_fitness(psos,func,iters=1,stride=100):
     plt.savefig(u'figure/{}.png'.format(func.__name__), bbox_inches='tight')
     plt.show()
     # write results to txt
-    with open(u'figure/{}.txt'.format(func.__name__),'w') as f:
+    with open(u'figure/{}.txt'.format(func.__name__), 'w') as f:
         for i, pso in enumerate(psos):
-            f.write(pso.__class__.__name__ + '\t'+ 'max' + '\t' + 'min' + '\t' + 'mean' +'\t' + 'std'+ '\t'+ 'time' +'\n')
-            f.write(str(np.max(results[:,i,-1])) + '&\t' + str(np.min(results[:,i,-1])) + '&\t' + str(np.mean(results[:,i,-1])) + '&\t' + str(np.std(results[:,i,-1])) +
-                    '&\t'+ str(avg_time[i]/iters) + '\\\\ \n')
+            f.write(
+                pso.__class__.__name__ + '\t' + 'max' + '\t' + 'min' + '\t' + 'mean' + '\t' + 'std' + '\t' + 'time' + '\n')
+            f.write(str(np.max(results[:, i, -1])) + '&\t' + str(np.min(results[:, i, -1])) + '&\t' + str(
+                np.mean(results[:, i, -1])) + '&\t' + str(np.std(results[:, i, -1])) +
+                    '&\t' + str(avg_time[i] / iters) + '\\\\ \n')
 
 
 
@@ -232,8 +240,10 @@ def test_2_dim(pso,func):
 
 
 if __name__ == '__main__':
+    iters = 10
     funcs = [bf.func1,bf.func2,bf.func3,bf.func4,bf.func5]
-    all_funcs = [bf.func1,bf.func2,bf.func3,bf.func4,bf.func5,bf.func6,bf.func7,bf.func8,bf.func9]
+    # all_funcs = [bf.func1,bf.func2,bf.func3,bf.func4,bf.func5,bf.func6,bf.func7,bf.func8,bf.func9]
+    all_funcs = [bf.func1]
 
     pso_og = PSO(dim=100, func=bf.func1)
     pso_awdv = PSO_AWDV(dim=100, func=bf.func1)
@@ -242,10 +252,8 @@ if __name__ == '__main__':
     psos = [pso_og,pso_awdv,mdpso,pso_lcsd]
 
 
-
-
     # test_parameter(psos, funcs)
-    # test_fitness(psos, bf.func1)
-    test_2_dim(pso_lcsd,bf.func1)
+    test_fitness(psos, bf.func1)
+    # test_2_dim(pso_lcsd,bf.func7)
 
 

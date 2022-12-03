@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import bench_functions as bf
 import math
 from mpl_toolkits.mplot3d import Axes3D
-
+from numba.experimental import jitclass
 
 plt.rcParams['font.family'] = 'JBHGSS2'
 
@@ -14,6 +14,8 @@ plt.rcParams['font.size'] = 14
 plt.rcParams['font.weight'] = 'bold'
 plt.rcParams['figure.figsize'] = (10.0, 6.0)
 # plt.rcParams['figure.figsize'] = (6.0, 6.0)
+
+
 class PSO: # 原版PSO
     def __init__(self, sizepop=130, rangepop=(-100,100), rangespeed=(-1, 1), maxgen=900, weight=1, lr=(1.49445, 1.49445), cycle_gen=50, func=bf.func1, dim=20):
         self.sizepop = sizepop
