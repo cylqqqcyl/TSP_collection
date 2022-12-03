@@ -209,7 +209,7 @@ def test_fitness(psos,func,iters=10,stride=100):
     plt.ylabel('平均适应度log(f(x))')
     plt.legend()
     plt.savefig(u'figure/{}.png'.format(func.__name__), bbox_inches='tight')
-    plt.show()
+    # plt.show()
     # write results to txt
     with open(u'figure/{}.txt'.format(func.__name__), 'w') as f:
         for i, pso in enumerate(psos):

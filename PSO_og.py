@@ -112,7 +112,8 @@ if __name__ == '__main__':
     pso.run()
     pso.plot()
     plt.xlabel('generation')
-    plt.ylabel('fitness')
+    plt.ylabel('最优值')
     plt.savefig('PSO.png')
+    plt.savefig(u'figure/{}_tes.png'.format("pso"), bbox_inches='tight')
     plt.show()
 
