@@ -78,7 +78,7 @@ def func8(x):
     f = f / 4000 - prod + 1
     return f
 
-def func9_noplot(x):
+def func9(x):
     # Penalized 1函数
     def func_y(xi):
         yi = 1 + (xi + 1) / 4
@@ -90,47 +90,29 @@ def func9_noplot(x):
     sum2 = 0
     for i in range(len(y) - 1):
         sum1 += (y[i] - 1) ** 2 * (1 + 10 * np.sin(np.pi * y[i + 1]) ** 2)
-        sum2 += func_u_noplot(y[i], 10, 100, 4)
-    sum2 += func_u_noplot(y[-1], 10, 100, 4)
+        sum2 += func_u(y[i], 10, 100, 4)
+    sum2 += func_u(y[-1], 10, 100, 4)
     f = np.pi / len(y) * (10 * np.sin(np.pi * y[0]) ** 2 + sum1 + (y[-1] - 1) ** 2) + sum2
     return f
 
-def func_u_noplot(xi, a, k, m):
-    if xi > a:
-        u = k * (xi - a) ** m
-    elif xi < -a:
-        u = k * (-xi - a) ** m
+def func_u(xi, a, k, m):
+    if xi.size == 1:
+        if xi > a:
+            return k * (xi - a) ** 2
+        elif xi < -a:
+            return k * (-xi - a) ** 2
+        else:
+            return 0
     else:
-        u = 0
-    return u
-
-def func9_plot(x):
-    # Penalized 1函数
-    def func_y(xi):
-        yi = 1 + (xi + 1) / 4
-        return yi
-
-    y = func_y(x)
-
-    sum1 = 0
-    sum2 = 0
-    for i in range(len(y) - 1):
-        sum1 += (y[i] - 1) ** 2 * (1 + 10 * np.sin(np.pi * y[i + 1]) ** 2)
-        sum2 += func_u_plot(y[i], 10, 100, 4)
-    sum2 += func_u_plot(y[-1], 10, 100, 4)
-    f = np.pi / len(y) * (10 * np.sin(np.pi * y[0]) ** 2 + sum1 + (y[-1] - 1) ** 2) + sum2
-    return f
-
-def func_u_plot(xi, a, k, m):
-    gta_mask = np.where(xi > a)
-    lta_mask = np.where(xi < -a)
-    zero_mask = np.where(np.abs(xi) <= a)
-    if len(gta_mask[0]) > 0:
-        xi[gta_mask] = k * (xi[gta_mask] - a) ** m + a ** m
-    if len(lta_mask[0]) > 0:
-        xi[lta_mask] = k * (-xi[lta_mask] - a) ** m + a ** m
-    if len(zero_mask[0]) > 0:
-        xi[zero_mask] = 0
+        gta_mask = np.where(xi > a)
+        lta_mask = np.where(xi < -a)
+        zero_mask = np.where(np.abs(xi) <= a)
+        if len(gta_mask[0]) > 0:
+            xi[gta_mask] = k * (xi[gta_mask] - a) ** m + a ** m
+        if len(lta_mask[0]) > 0:
+            xi[lta_mask] = k * (-xi[lta_mask] - a) ** m + a ** m
+        if len(zero_mask[0]) > 0:
+            xi[zero_mask] = 0
     return xi
 
 
@@ -140,7 +122,7 @@ if __name__ == '__main__':
     X, Y = np.meshgrid(x, y)
 
 
-    Z = func9_plot(np.asarray([X, Y]))
+    Z = func9(np.asarray([X, Y]))
 
 
     fig = plt.figure()

@@ -108,7 +108,7 @@ if __name__ == '__main__':
     maxgen = 1000
     # weight = 0.5
     # lr = [0.5, 0.5]
-    pso = PSO(sizepop=sizepop, maxgen=maxgen,func=bf.func9_noplot,rangepop=(-5.12,5.12))
+    pso = PSO(sizepop=sizepop, maxgen=maxgen,func=bf.func9,rangepop=(-5.12,5.12))
     pso.run()
     pso.plot()
     plt.xlabel('generation')
