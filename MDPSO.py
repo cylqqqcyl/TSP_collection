@@ -160,7 +160,7 @@ if __name__ == '__main__':
     maxgen = 1000
     # weight = 0.5
     # lr = [0.5, 0.5]
-    pso = PSO(sizepop=sizepop, maxgen=maxgen)
+    pso = MDPSO(sizepop=sizepop, maxgen=maxgen)
     pso.run()
     pso.plot()
     plt.xlabel('generation')
